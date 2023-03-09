@@ -1,27 +1,23 @@
 package com.example.exampleapp.activities
 
-import android.content.Intent
-import android.content.IntentFilter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.exampleapp.ExampleApplication
+import androidx.appcompat.app.AppCompatActivity
 import com.example.exampleapp.R
-import com.example.exampleapp.receiver.NumberReceiver
-import com.example.exampleapp.receiver.NumberReceiver.Companion.NUMBER_RECEIVER_ACTION
-import com.example.exampleapp.services.SimpleService
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HelloActivity : AppCompatActivity() {
 
     private val userNameText by lazy { findViewById<TextView>(R.id.myUserName) }
+    private val startServiceBtn by lazy { findViewById<Button>(R.id.startServiceBtn) }
+    private val stopServiceBtn by lazy { findViewById<Button>(R.id.stopServiceBtn) }
 
     companion object {
+
         const val USER_NAME_EXTRA = "USER_NAME"
     }
 
@@ -31,6 +27,24 @@ class HelloActivity : AppCompatActivity() {
 
         val userName = intent.getStringExtra(USER_NAME_EXTRA)
         userNameText.text = userName
+        var isDestroyed = false
+        startServiceBtn.setOnClickListener {
+
+            isDestroyed = false
+            GlobalScope.launch {
+                var number = 0;
+                while (!isDestroyed) {
+                    number++;
+                    Log.d("RMRM", "New number $number");
+                    delay(1000);
+                }
+            }
+
+        }
+
+        stopServiceBtn.setOnClickListener {
+            isDestroyed = true
+        }
 
     }
 
