@@ -3,7 +3,6 @@ package com.example.exampleapp.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.webkit.WebView.FindListener
 import android.widget.Button
 import com.example.exampleapp.ExampleApplication
 import com.example.exampleapp.R
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             val userName = userNameInput.text.toString()
 
             val intent = Intent(this, HelloActivity::class.java)
-            intent.putExtra(HelloActivity.USER_NAME_EXTRA, userName)
+            intent.putExtra(HelloActivity.USER_NAME_SERVICE, userName)
             startActivity(intent)
 
         }

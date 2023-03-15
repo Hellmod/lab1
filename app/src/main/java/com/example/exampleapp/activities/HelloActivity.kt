@@ -1,12 +1,14 @@
 package com.example.exampleapp.activities
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.exampleapp.R
+import com.example.exampleapp.receiver.NumberReceiver
 import com.example.exampleapp.services.SimpleService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -18,29 +20,30 @@ class HelloActivity : AppCompatActivity() {
     private val startServiceBtn by lazy { findViewById<Button>(R.id.startServiceBtn) }
     private val stopServiceBtn by lazy { findViewById<Button>(R.id.stopServiceBtn) }
     private val readUsersBtn by lazy { findViewById<Button>(R.id.readUsersBtn) }
+    var isDestroyedService = false
 
+    private val numberReceiver = NumberReceiver()
     companion object {
 
-        const val USER_NAME_EXTRA = "USER_NAME"
+        const val USER_NAME_SERVICE = "USER_NAME_SERVICE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_hello)
 
-        val userName = intent.getStringExtra(USER_NAME_EXTRA)
+        val userName = intent.getStringExtra(USER_NAME_SERVICE)
         userNameText.text = userName
 
-        val intent = Intent(this, SimpleService::class.java)
-        startService(intent)
-
-        var isDestroyed = false
         startServiceBtn.setOnClickListener {
+            val intent = Intent(this, SimpleService::class.java)
+            intent.putExtra(USER_NAME_SERVICE, userName)
             startService(intent)
             //runOldTimer()
         }
 
         stopServiceBtn.setOnClickListener {
+            val intent = Intent(this, SimpleService::class.java)
             stopService(intent)
             //stopOldTime()
         }
@@ -48,13 +51,14 @@ class HelloActivity : AppCompatActivity() {
 
         }
 
+        registerReceiver(numberReceiver, IntentFilter(NumberReceiver.NUMBER_RECEIVER_ACTION))
     }
 
     fun runOldTimer(){
-        isDestroyed = false
+        isDestroyedService = false
         GlobalScope.launch {
             var number = 0;
-            while (!isDestroyed) {
+            while (!isDestroyedService) {
                 number++;
                 Log.d("RMRM", "New number $number");
                 delay(1000);
@@ -63,11 +67,12 @@ class HelloActivity : AppCompatActivity() {
     }
 
     fun stopOldTime(){
-        isDestroyed = true
+        isDestroyedService = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(numberReceiver)
     }
 
 }

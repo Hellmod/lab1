@@ -4,20 +4,27 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.example.exampleapp.services.SimpleService.Companion.EXTRAS_CLOCK_TICK
+import com.example.exampleapp.services.SimpleService.Companion.EXTRAS_USER_NAME
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class NumberReceiver : BroadcastReceiver() {
-    companion object {
-
-        const val NUMBER_EXTRA = "number"
-        const val USER_NAME_EXTRA = "userName"
-        const val NUMBER_RECEIVER_ACTION = "NUMBER_RECEIVER_ACTION"
-    }
-
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("RMRM", "Received message")
-        val number = intent?.getIntExtra(NUMBER_EXTRA, 0) ?: 0
-        val user = intent?.getStringExtra(USER_NAME_EXTRA) ?: ""
-        Log.d("RMRM", "User: $user, Number: $number")
+        intent?.let {
+            processReceivedIntent(it)
+        }
+    }
+
+    private fun processReceivedIntent(intent: Intent) {
+        val clockTick = intent.getIntExtra(EXTRAS_CLOCK_TICK, 0)
+        val userName = intent.getStringExtra(EXTRAS_USER_NAME) ?: ""
+        Log.d("RMRM", "NumberReceiver: userName=${userName}, clockTick=${clockTick}")
+
+    }
+    companion object {
+        const val NUMBER_RECEIVER_ACTION = "NUMBER_RECEIVER_ACTION"
     }
 
 }
