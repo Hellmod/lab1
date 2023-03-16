@@ -5,11 +5,17 @@ import androidx.room.Room
 import com.example.exampleapp.room.AppDatabase
 
 class ExampleApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
 
-    val database by lazy {
-        Room.databaseBuilder(
+        database = Room.databaseBuilder(
             applicationContext,
-            AppDatabase::class.java, "example-database"
+            AppDatabase::class.java,
+            "example-database"
         ).build()
+    }
+
+    companion object {
+        lateinit var database: AppDatabase
     }
 }

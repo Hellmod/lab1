@@ -1,5 +1,6 @@
 package com.example.exampleapp.activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -7,8 +8,13 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import com.example.exampleapp.ExampleApplication
 import com.example.exampleapp.R
 import com.example.exampleapp.receiver.NumberReceiver
+import com.example.exampleapp.room.AppDatabase
+import com.example.exampleapp.room.User
+import com.example.exampleapp.room.UserRepository
 import com.example.exampleapp.services.SimpleService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -20,9 +26,12 @@ class HelloActivity : AppCompatActivity() {
     private val startServiceBtn by lazy { findViewById<Button>(R.id.startServiceBtn) }
     private val stopServiceBtn by lazy { findViewById<Button>(R.id.stopServiceBtn) }
     private val readUsersBtn by lazy { findViewById<Button>(R.id.readUsersBtn) }
+    private val myUserNameFromRoom by lazy { findViewById<TextView>(R.id.myUserNameFromRoom) }
     var isDestroyedService = false
+    var readAllData: List<User> = listOf()
 
     private val numberReceiver = NumberReceiver()
+
     companion object {
 
         const val USER_NAME_SERVICE = "USER_NAME_SERVICE"
@@ -48,13 +57,25 @@ class HelloActivity : AppCompatActivity() {
             //stopOldTime()
         }
         readUsersBtn.setOnClickListener {
+            Log.d("RMRM2", "setOnClickListener")
+
+            GlobalScope.launch {
+                readAllData = ExampleApplication.database.userDao().getAll()
+
+            }
+
+            readAllData.forEach {
+                Log.d("RMRM2", "readAllData ${it}")
+            }
+            myUserNameFromRoom.text = readAllData.toString()
 
         }
 
         registerReceiver(numberReceiver, IntentFilter(NumberReceiver.NUMBER_RECEIVER_ACTION))
+
     }
 
-    fun runOldTimer(){
+    fun runOldTimer() {
         isDestroyedService = false
         GlobalScope.launch {
             var number = 0;
@@ -66,7 +87,7 @@ class HelloActivity : AppCompatActivity() {
         }
     }
 
-    fun stopOldTime(){
+    fun stopOldTime() {
         isDestroyedService = true
     }
 
@@ -74,5 +95,6 @@ class HelloActivity : AppCompatActivity() {
         super.onDestroy()
         unregisterReceiver(numberReceiver)
     }
+
 
 }
