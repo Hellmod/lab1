@@ -8,7 +8,6 @@ import android.os.Looper
 import android.util.Log
 import com.example.exampleapp.activities.HelloActivity
 import com.example.exampleapp.receiver.NumberReceiver
-
 class SimpleService : Service() {
 
     companion object {
@@ -25,7 +24,7 @@ class SimpleService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("RMRM", "Service created")
+        Log.d("MPMP", "Service created")
         isServiceRunning = true
         startClock()
     }
@@ -33,7 +32,7 @@ class SimpleService : Service() {
     private fun startClock() {
         runnable = Runnable {
             number++
-            Log.d("RMRM", "Number: $number")
+            Log.d("MPMP", "Number: $number")
             if (isServiceRunning) {
                 handler.postDelayed(runnable, 1000)
             }
@@ -42,17 +41,13 @@ class SimpleService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("RMRM", "Service started")
+        Log.d("MPMP", "Service started")
         userName = intent?.getStringExtra(HelloActivity.USER_NAME_SERVICE) ?: ""
         sendUserNameAndClockTick()
         return START_STICKY
     }
 
     private fun sendUserNameAndClockTick() {
-/*        val intent = Intent(this, NumberReceiver::class.java)
-        intent.putExtra(HelloActivity.USER_NAME_SERVICE, userName)
-        startActivity(intent)*/
-
         val newIntent = Intent(NumberReceiver.NUMBER_RECEIVER_ACTION).also {
             it.putExtra(EXTRAS_CLOCK_TICK, number)
             it.putExtra(
@@ -67,7 +62,7 @@ class SimpleService : Service() {
         super.onDestroy()
         isServiceRunning = false
         handler.removeCallbacks(runnable)
-        Log.d("RMRM", "Service destroyed")
+        Log.d("MPMP", "Service destroyed")
         sendUserNameAndClockTick()
     }
 

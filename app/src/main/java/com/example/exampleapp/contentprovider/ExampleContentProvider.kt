@@ -7,9 +7,6 @@ import android.net.Uri
 import com.example.exampleapp.ExampleApplication
 
 class ExampleContentProvider : ContentProvider() {
-    private val userDao by lazy {
-//        (context!!.applicationContext as ExampleApplication).database.userDao() //RM co to jest?
-    }
 
     override fun onCreate(): Boolean {
         return false

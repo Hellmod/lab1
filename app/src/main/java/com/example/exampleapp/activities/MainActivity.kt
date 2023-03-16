@@ -26,11 +26,4 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
-    override fun onDestroy() {
-        //(applicationContext as ExampleApplication).database.close()
-
-        super.onDestroy()
-    }
-
 }
